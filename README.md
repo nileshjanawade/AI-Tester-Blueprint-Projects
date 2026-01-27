@@ -7,19 +7,42 @@ A secure, local-first application that generates professional QA test suites fro
 ## 🏗️ Architecture Diagram
 
 ```mermaid
-graph TD
-    User([👤 User]) -->|Enters Requirement| UI[💻 Streamlit Frontend]
-    UI -->|Sends Prompt| Logic[⚙️ Backend Generator]
-    Logic -->|API Call (JSON Mode)| Ollama[🦙 Ollama Local Server]
+flowchart TB
+    Start([👤 User Opens App]) --> UI[🌐 Streamlit UI Loads]
+    UI --> Input{User Enters<br/>Feature Requirement}
     
-    subgraph Local Machine
-        Ollama -->|Inference| Model{🧠 LLM Model}
-        Model -->|gemma3:1b / llama3.2| Ollama
+    Input -->|Example: Login with 2FA| Validate[✅ Input Validation]
+    Validate -->|Valid| Prompt[📝 Build Structured Prompt]
+    Validate -->|Invalid/Empty| Error1[❌ Show Error Message]
+    Error1 --> Input
+    
+    Prompt --> Backend[⚙️ Backend Generator<br/>generator.py]
+    Backend -->|HTTP Request| Ollama[🦙 Ollama API<br/>localhost:11434]
+    
+    subgraph Local_Machine[🖥️ Local Machine - No Internet Required]
+        Ollama -->|Load Model| Model{🧠 LLM Model<br/>gemma3:1b/llama3.2}
+        Model -->|Generate| Response[📄 JSON Response]
+        Response -->|Validate Schema| Check{Valid JSON?}
+        Check -->|No| Retry[🔄 Retry Logic<br/>Max 2 attempts]
+        Retry --> Model
+        Check -->|Yes| Return[✅ Return Test Suite]
     end
     
-    Ollama -->|Structured JSON| Logic
-    Logic -->|Parsed Test Cases| UI
-    UI -->|Visual Cards / CSV Export| User
+    Return --> Parse[🔍 Parse & Structure Data]
+    Parse --> Display[🎨 Render UI Components]
+    
+    Display --> Tab1[👁️ Visual Cards View]
+    Display --> Tab2[💻 JSON View]
+    Display --> Tab3[📊 Table + CSV Export]
+    
+    Tab1 --> End([✨ User Reviews Results])
+    Tab2 --> End
+    Tab3 --> Download[⬇️ Download CSV]
+    Download --> End
+    
+    style Local_Machine fill:#1a1a2e,stroke:#16213e,stroke-width:3px
+    style Model fill:#0f3460,stroke:#e94560,stroke-width:2px
+    style End fill:#16213e,stroke:#e94560,stroke-width:2px
 ```
 
 ---
