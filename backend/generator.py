@@ -15,10 +15,10 @@ def check_ollama(model_name="llama3.2"):
         if any(model_name in m for m in available_models):
             return True
             
-        print(f"⚠️ Model '{model_name}' not found. Available: {available_models}")
+        print(f"WARNING: Model '{model_name}' not found. Available: {available_models}")
         return False
     except Exception as e:
-        print(f"❌ Ollama connection error: {e}")
+        print(f"ERROR: Ollama connection error: {e}")
         return False
 
 def generate_test_cases(requirement, model="llama3.2"):
@@ -66,7 +66,7 @@ def generate_test_cases(requirement, model="llama3.2"):
             # Simple Schema Validation
             if "cases" not in data or not isinstance(data["cases"], list):
                 if attempt < max_retries - 1:
-                    print(f"⚠️ Invalid structure received, retrying... (Attempt {attempt+1})")
+                    print(f"WARNING: Invalid structure received, retrying... (Attempt {attempt+1})")
                     continue
                 else:
                     raise ValueError("LLM returned invalid JSON structure (missing 'cases' list).")
@@ -75,7 +75,7 @@ def generate_test_cases(requirement, model="llama3.2"):
             
         except json.JSONDecodeError:
             if attempt < max_retries - 1:
-                print(f"⚠️ JSON Decode Error, retrying... (Attempt {attempt+1})")
+                print(f"WARNING: JSON Decode Error, retrying... (Attempt {attempt+1})")
                 continue
             raise Exception("Failed to parse JSON response from LLM.")
         except Exception as e:
