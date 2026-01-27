@@ -82,10 +82,10 @@ with st.sidebar:
         with st.spinner(f"Pinging {selected_model}..."):
             status = generator.check_ollama(selected_model)
             if status:
-                st.toast(f"Connected to {selected_model}", icon="✅")
+                st.toast(f"Connected to {selected_model}")
                 st.success("System Online")
             else:
-                st.toast(f"Connection Failed: {selected_model}", icon="❌")
+                st.toast(f"Connection Failed: {selected_model}")
                 st.error("Model Offline")
     
     st.divider()
