@@ -9,7 +9,7 @@ def check_ollama(model_name="llama3.2"):
     """
     try:
         models = ollama.list()
-        available_models = [m['name'] for m in models['models']]
+        available_models = [m.model for m in models.models]
         
         # Check for exact or partial match (e.g., 'gemma3:1b' matching 'gemma3:1b:latest')
         if any(model_name in m for m in available_models):
