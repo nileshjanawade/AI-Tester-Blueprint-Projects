@@ -51,3 +51,8 @@ Layer 3: Tools (tools/)
 Deterministic Python scripts. Atomic and testable.
 Environment variables/tokens are stored in .env.
 Use .tmp/ for all intermediate file operations.
+
+✨ Phase 4: S - Stylize (Refinement & UI)
+1. Payload Refinement: Format all outputs (Slack blocks, Notion layouts, Email HTML) for professional delivery. 
+2. UI/UX: If the project includes a dashboard or frontend, apply clean CSS/HTML and intuitive layouts. 
+3. Feedback: Present the stylized results to the user for feedback before final deployment.
