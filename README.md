@@ -1,6 +1,6 @@
 # 🧪 Local LLM Test Case Generator
 
-A secure, local-first application that generates professional QA test suites from feature requirements using **Ollama** and **Python**. No data leaves your machine.
+A secure, local-first application that generates professional QA test suites from feature requirements using **React**, **FastAPI**, and **Ollama**. No data leaves your machine.
 
 ---
 
@@ -8,16 +8,11 @@ A secure, local-first application that generates professional QA test suites fro
 
 ```mermaid
 flowchart TB
-    Start([👤 User Opens App]) --> UI[🌐 Streamlit UI Loads]
+    Start([👤 User Opens App]) --> UI[⚛️ React Frontend<br/>localhost:5173]
     UI --> Input{User Enters<br/>Feature Requirement}
     
-    Input -->|Example: Login with 2FA| Validate[✅ Input Validation]
-    Validate -->|Valid| Prompt[📝 Build Structured Prompt]
-    Validate -->|Invalid/Empty| Error1[❌ Show Error Message]
-    Error1 --> Input
-    
-    Prompt --> Backend[⚙️ Backend Generator<br/>generator.py]
-    Backend -->|HTTP Request| Ollama[🦙 Ollama API<br/>localhost:11434]
+    Input -->|API Call| FastAPI[⚡ FastAPI Backend<br/>localhost:8000]
+    FastAPI -->|HTTP Request| Ollama[🦙 Ollama API<br/>localhost:11434]
     
     subgraph Local_Machine[🖥️ Local Machine - No Internet Required]
         Ollama -->|Load Model| Model{🧠 LLM Model<br/>gemma3:1b/llama3.2}
@@ -28,17 +23,18 @@ flowchart TB
         Check -->|Yes| Return[✅ Return Test Suite]
     end
     
-    Return --> Parse[🔍 Parse & Structure Data]
-    Parse --> Display[🎨 Render UI Components]
+    Return --> FastAPI
+    FastAPI --> UI
+    
+    UI --> Display[🎨 Render UI Components]
     
     Display --> Tab1[👁️ Visual Cards View]
     Display --> Tab2[💻 JSON View]
-    Display --> Tab3[📊 Table + CSV Export]
+    Display --> Export[📊 CSV Export]
     
     Tab1 --> End([✨ User Reviews Results])
     Tab2 --> End
-    Tab3 --> Download[⬇️ Download CSV]
-    Download --> End
+    Export --> End
     
     style Local_Machine fill:#1a1a2e,stroke:#16213e,stroke-width:3px
     style Model fill:#0f3460,stroke:#e94560,stroke-width:2px
@@ -48,24 +44,28 @@ flowchart TB
 ---
 
 ## 🚀 Features
-*   **100% Local**: Uses Ollama API; no cloud tokens or internet required for generation.
-*   **Structured Output**: Generates strict JSON for reliable parsing.
-*   **Multi-Model Support**: Switch between `gemma3:1b`, `llama3.2`, `mistral`, etc.
-*   **Export Ready**: Download test cases as **CSV** or copy as **JSON**.
-*   **Premium UI**: Dark mode, distinct priority badges, and tabbed views.
+- **Modern React UI**: High-performance, responsive interface built with Vite and Framer Motion.
+- **FastAPI Layer**: Dedicated backend for efficient model management and generation logic.
+- **100% Local**: Uses Ollama API; no cloud tokens or internet required.
+- **Structured Output**: Generates strict JSON for reliable parsing.
+- **Multi-Model Support**: Switch between `gemma3:1b`, `llama3.2`, `mistral`, etc.
+- **Export Ready**: Download test cases as **CSV** or view as **JSON**.
 
 ## 📂 Project Structure
 ```bash
 Project1-LocalTestCaseGenerator/
-├── architecture/        # SOPs and Logic Blueprints
-├── backend/             # Core Logic
-│   ├── generator.py     # Ollama interaction & parsing logic
-│   └── requirements.txt # Python dependencies
-├── frontend/            # User Interface
-│   └── app.py           # Streamlit Application
-├── tools/               # Utility Scripts
-│   └── verify_ollama.py # Connection Test Script
-└── README.md            # Documentation
+├── architecture/         # SOPs and Logic Blueprints
+├── backend/              # FastAPI Server & Core Logic
+│   ├── main.py           # API Endpoints
+│   ├── generator.py      # Ollama interaction logic
+│   └── requirements.txt  # Python dependencies
+├── frontend-react/       # Modern React UI (Vite)
+│   ├── src/
+│   │   ├── App.jsx       # Main UI Component
+│   │   └── App.css       # Premium Styling
+│   └── package.json
+├── tools/                # Utility Scripts
+└── README.md             # Documentation
 ```
 
 ## 🛠️ Prerequisites
@@ -73,28 +73,30 @@ Project1-LocalTestCaseGenerator/
 2.  **Pull a Model**:
     ```bash
     ollama pull gemma3:1b
-    # OR
-    ollama pull llama3.2
     ```
-3.  **Python 3.10+**
+3.  **Python 3.10+** & **Node.js 18+**
 
 ## ⚡ Quick Start
 
-1.  **Install Dependencies**
-    ```bash
-    pip install -r backend/requirements.txt
-    ```
+### 1. Setup Backend
+```bash
+# In the project root
+pip install -r backend/requirements.txt
+uvicorn backend.main:app --port 8000
+```
 
-2.  **Run the App**
-    ```bash
-    streamlit run frontend/app.py
-    ```
+### 2. Setup Frontend
+```bash
+# In a new terminal
+cd frontend-react
+npm install
+npm run dev
+```
 
-3.  **Generate Tests**
-    *   Open `http://localhost:8501`.
-    *   Select your model in the sidebar.
-    *   Type a requirement (e.g., *"Signup page with email verification"*).
-    *   Export your results!
+### 3. Generate Tests
+- Open `http://localhost:5173`.
+- Select your model in the sidebar.
+- Type a requirement and get your test suite!
 
 ---
 
