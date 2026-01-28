@@ -74,8 +74,20 @@ with st.sidebar:
     st.divider()
     
     st.header("⚙️ Configuration")
-    model_options = ["gemma3:1b", "llama3.2", "llama3.1", "mistral"]
-    selected_model = st.selectbox("🤖 Local Model", model_options, index=0)
+    
+    # Dynamically fetch available models
+    try:
+        import ollama
+        models_response = ollama.list()
+        available_models = [m.model for m in models_response.models]
+        if not available_models:
+            available_models = ["gemma3:1b", "llama3.2", "llama3.1", "mistral"]
+            st.warning("No models found. Please run: `ollama pull gemma3:1b`")
+    except Exception as e:
+        available_models = ["gemma3:1b", "llama3.2", "llama3.1", "mistral"]
+        st.warning(f"Could not fetch models: {e}")
+    
+    selected_model = st.selectbox("🤖 Local Model", available_models, index=0)
     
     # Status Indicator
     if st.button("🔌 Check Connection", use_container_width=True):
